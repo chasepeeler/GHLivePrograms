@@ -1,8 +1,8 @@
 /* Required libraries */
-var Subscription = require("subscriptions");
+var SubscriptionManager = require("subscription_manager");
 
 
-var s = new Subscription({title: "  ",subtitle:"GHTV Programs", "icon":"images/gh-live-logo.png"});
+var sm = new SubscriptionManager({title: "  ",subtitle:"GHTV Programs", "icon":"images/gh-live-logo.png"});
 
 
 
@@ -25,5 +25,5 @@ var topics = [
   {id: "other", title:"Other", subscribed: false, icon:""}
 ];
 
-s.addTopics(topics);
-s.start();
+sm.addTopics(topics);
+sm.start();

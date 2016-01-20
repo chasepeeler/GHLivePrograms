@@ -2,9 +2,9 @@ var UI = require('ui');
 var Vibe = require('ui/vibe');
 
 
-module.exports = Subscriptions;
+module.exports = SubscriptionManager;
 
-function Subscriptions(title, icon, subtitle, body, unsubscribed_label, subscribed_label, reset_downclicks_required){
+function SubscriptionManager(title, icon, subtitle, body, unsubscribed_label, subscribed_label, reset_downclicks_required){
   this.properties = {unsubscribed_label: "Unsubscribed", subscribed_label: "Subscribed", reset_downclicks_required: 3, title: "", icon: "", subtitle: "", body: "Press the middle button to configure subscriptions."};
   
   if(typeof title == "object"){
@@ -27,11 +27,11 @@ function Subscriptions(title, icon, subtitle, body, unsubscribed_label, subscrib
   this.resetDownClicks = 0;
 }
 
-Subscriptions.prototype.start = function(){
+SubscriptionManager.prototype.start = function(){
   this.initSubscriptions();
 };
 
-Subscriptions.prototype.finishInit = function(){
+SubscriptionManager.prototype.finishInit = function(){
   
   this.main = new UI.Card({
     title: this.properties.title,
@@ -81,13 +81,13 @@ Subscriptions.prototype.finishInit = function(){
 
 };
 
-Subscriptions.prototype.addTopics = function(topics){
+SubscriptionManager.prototype.addTopics = function(topics){
   for(var i=0;i<topics.length;i++){
     this.addTopic(topics[i]);
   }
 };
 
-Subscriptions.prototype.addTopic = function(id, title, icon, subscribed, subtitle){
+SubscriptionManager.prototype.addTopic = function(id, title, icon, subscribed, subtitle){
   var topic = {id: "", title: "", icon: "", subscribed: false, subtitle: this.properties.unsubscribed_label};
   if(typeof id == "object"){
     for(var k in id){
@@ -108,7 +108,7 @@ Subscriptions.prototype.addTopic = function(id, title, icon, subscribed, subtitl
   return topic;
 };
 
-Subscriptions.prototype.initSubscriptions = function(){
+SubscriptionManager.prototype.initSubscriptions = function(){
     Pebble.timelineSubscriptions(
       function (subscribed) {
         if(subscribed !== null && subscribed.length > 0){
@@ -129,14 +129,14 @@ Subscriptions.prototype.initSubscriptions = function(){
 };
 
 
-Subscriptions.prototype.showTopicsMenu =function(){
+SubscriptionManager.prototype.showTopicsMenu =function(){
   this.mainMenu.items(0,this.topics);
   this.mainMenu.on("select",this.toggleSubscription.bind(this));
   this.mainMenu.show();
 };
 
 //toggles the topic between subscribed and unsubscribed
-Subscriptions.prototype.toggleSubscription = function(event){
+SubscriptionManager.prototype.toggleSubscription = function(event){
   if(this.isSubscribed(event)){
     this.unsubscribe(event);    
   } else {
@@ -146,7 +146,7 @@ Subscriptions.prototype.toggleSubscription = function(event){
 
 //determined if the event
 //represents a menu item of a subscribed topic
-Subscriptions.prototype.isSubscribed = function(event){
+SubscriptionManager.prototype.isSubscribed = function(event){
   var topic = this.getTopic(event);
   return topic.subscribed;
 };
@@ -155,7 +155,7 @@ Subscriptions.prototype.isSubscribed = function(event){
 //subscribes/unsubscribes from the topic
 //makes the API call, and if successful,
 //will update the status and menu items subtitle
-Subscriptions.prototype.subUnsub = function(event,callback,subscribed,label){
+SubscriptionManager.prototype.subUnsub = function(event,callback,subscribed,label){
   var item = this.getTopic(event);
   callback(item.id,
         function(){
@@ -170,17 +170,17 @@ Subscriptions.prototype.subUnsub = function(event,callback,subscribed,label){
 };
 
 
-Subscriptions.prototype.unsubscribe = function(event){
+SubscriptionManager.prototype.unsubscribe = function(event){
   this.subUnsub(event,Pebble.timelineUnsubscribe,false,this.properties.unsubscribed_label);
 };
 
 //does the opposite of unsubscribe
-Subscriptions.prototype.subscribe = function(event){
+SubscriptionManager.prototype.subscribe = function(event){
   this.subUnsub(event,Pebble.timelineSubscribe,true,this.properties.subscribed_label);
 };
 
 //returns our topic given the id
-Subscriptions.prototype.getTopic = function(topic){
+SubscriptionManager.prototype.getTopic = function(topic){
   if(typeof topic != "object"){ //we were passed in the id, so find it in our array
     for(var i =0;i<this.topics.length;i++){
       if(this.topics[i].id == topic){
@@ -197,7 +197,7 @@ Subscriptions.prototype.getTopic = function(topic){
   return null;
 };
 
-Subscriptions.prototype.resetAll = function(){
+SubscriptionManager.prototype.resetAll = function(){
   for(var i=0;i<this.topics.length;i++){
     this.unsubscribe(this.topics[i]);
   }
