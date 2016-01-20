@@ -28,6 +28,11 @@
                 "file": "fonts/UbuntuMono-Regular.ttf",
                 "name": "MONO_FONT_14",
                 "type": "font"
+            },
+            {
+                "file": "images/gh-live-logo.png",
+                "name": "IMAGES_GH_LIVE_LOGO_PNG",
+                "type": "bitmap"
             }
         ]
     },

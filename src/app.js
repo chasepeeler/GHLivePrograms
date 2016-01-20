@@ -2,7 +2,7 @@
 var Subscription = require("subscriptions");
 
 
-var s = new Subscription({title: "GHTV",subtitle:"Programming"});
+var s = new Subscription({title: "  ",subtitle:"GHTV Programs", "icon":"images/gh-live-logo.png"});
 
 
 
