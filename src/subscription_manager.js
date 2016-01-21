@@ -116,7 +116,14 @@ SubscriptionManager.prototype.initSubscriptions = function(){
           for(var i = 0;i<this.topics.length;i++){
             //if the subscriptions contains the ID of the current topic, that means
             //we are subscribed to it.
-            this.topics[i].subscribed = subscribed.indexOf(this.topics[i].id) >= 0;
+            if(subscribed.indexOf(this.topics[i].id) >= 0){
+              this.topics[i].subscribed = true;
+              this.topics[i].subtitle = this.properties.subscribed_label;
+            } else {
+              this.topics[i].subscribed = false;
+              this.topics[i].subtitle = this.properties.unsubscribed_label;
+
+            }
           }
         }
         this.finishInit();
