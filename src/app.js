@@ -1,5 +1,5 @@
 /* Required libraries */
-var SubscriptionManager = require("subscription_manager");
+var SubscriptionManager = require("node_modules/pebble-subscription-manager/subscription_manager");
 
 
 var sm = new SubscriptionManager({title: "  ",subtitle:"GHTV Programs", "icon":"images/gh-live-logo.png"});
