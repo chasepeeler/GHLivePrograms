@@ -63,7 +63,6 @@ foreach($programs as $program){
 		$reminder = new PinReminder($reminderlayout, $reminder_time); //send the reminder right away
 
 
-		echo getPinId($program);exit;
 
 		$pin = new Pin(getPinId($program), $program->startTime, $pinLayout, $program->duration , null);
 		$pin->addReminder($reminder);
