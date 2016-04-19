@@ -51,7 +51,7 @@ foreach($programs as $program){
 		}
 
 		$pinLayout = new PinLayout(
-			PinLayoutType::GENERIC_PIN, $program->title, "GHTV", $program->category, getBody($program), PinIcon::TIMELINE_SPORTS
+			PinLayoutType::GENERIC_PIN, $program->title, "GHTV", ucfirst($program->category), getBody($program), PinIcon::TIMELINE_SPORTS
 		);
 
 		$reminderlayout = new PinLayout(
@@ -106,7 +106,7 @@ function getPinId($program){
 function getBody($program){
 	$body = PHP_EOL;
 	$body .= "Title: {$program->title}".PHP_EOL . PHP_EOL;
-	$body .= "Category: {$program->category}".PHP_EOL . PHP_EOL;
+	$body .= "Category: ".ucfirst($program->category).PHP_EOL . PHP_EOL;
 	$body .= "Channel: {$program->channel}".PHP_EOL . PHP_EOL;
 
 	return $body;
