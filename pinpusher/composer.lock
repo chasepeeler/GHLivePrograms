@@ -1,0 +1,70 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "a86a40aa3882dc2dad6dcf9fb9479166",
+    "content-hash": "9b534536e0474ff0e2e8ccb568a854aa",
+    "packages": [
+        {
+            "name": "fletchto99/phppebbletimeline",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fletchto99/PHPebbleTimeline.git",
+                "reference": "master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "TimelineAPI\\": "/TimelineAPI"
+                }
+            }
+        },
+        {
+            "name": "vanilla/garden-cli",
+            "version": "v1.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vanilla/garden-cli.git",
+                "reference": "91487172b7b94435cf6960052479d24c2e97233d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vanilla/garden-cli/zipball/91487172b7b94435cf6960052479d24c2e97233d",
+                "reference": "91487172b7b94435cf6960052479d24c2e97233d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Garden\\Cli\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Todd Burry",
+                    "email": "todd@vanillaforums.com"
+                }
+            ],
+            "description": "A full-featured, yet ridiculously simple commandline parser for your next php cli script. Stop fighting with getopt().",
+            "time": "2016-01-28 20:35:34"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

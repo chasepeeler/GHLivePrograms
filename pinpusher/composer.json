@@ -1,0 +1,26 @@
+{
+	"repositories": [
+		{
+			"type":"package",
+			"package": {
+				"name": "fletchto99/phppebbletimeline",
+				"version": "1.0",
+				"source": {
+					"type": "git",
+					"url": "https://github.com/fletchto99/PHPebbleTimeline.git",
+					"reference": "master"
+					
+				},
+				"autoload": {
+					"psr-4": {"TimelineAPI\\": "/TimelineAPI"}
+				}
+				
+			}
+		}
+	],
+	"require": {
+		"fletchto99/phppebbletimeline": "1.0",
+		"vanilla/garden-cli": "~1.0"
+	}
+		
+}

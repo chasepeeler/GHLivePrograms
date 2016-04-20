@@ -1,7 +1,7 @@
 <?php
 
 require_once 'config.php';
-require_once './PHPebbleTimeline/TimelineAPI/Timeline.php';
+require_once 'vendor/autoload.php';
 
 use TimelineAPI\Pin;
 use TimelineAPI\PinLayout;
@@ -9,13 +9,33 @@ use TimelineAPI\PinLayoutType;
 use TimelineAPI\PinIcon;
 use TimelineAPI\PinReminder;
 use TimelineAPI\Timeline;
+use Garden\Cli\Cli;
 
-if ($argv[1] == "test") {
+define('PUSH','push');
+define('DISPLAY','display');
+
+$cli = Cli::create()
+	->command('push')
+	->description('Pushes pins to timeline API')
+	->opt("testing:t","Push pins using the sandbox key",false,'boolean')
+	->command('display')
+	->description('Displays the JSON for the pins instead of pushing them to the API')
+	->command('*')
+	->opt('days-out:d','The number of days out to pull data from the GHTV API. Default is 3.',false,'integer')
+	->opt('num-items:i','The maximum number of items to pull from the GHTV API. Default is no limit.',false,'integer');
+	
+$args = $cli->parse($argv);
+$command = $args->getCommand();
+$daysout = $args->getOpt('days-out',3);
+$numitems = $args->getOpt('num-items',PHP_INT_MAX);
+if($command == PUSH && true === $args->getOpt('testing',false)){
 	$key = TEST_KEY;
 } else {
 	$key = PROD_KEY;
 }
+	
 
+	
 $category_list = ["pop", "rock", "metal", "indie", "classics", "riffs", "jams", "hits", "smashes", "picks", "knockouts", "anthems", "headliners", "blockbusters"];
 
 $d = json_decode(file_get_contents("https://www.guitarhero.com/api/papi-client/ghl/v1/channelSchedules/en/all/"));
@@ -44,12 +64,15 @@ usort($programs,"sortPrograms");
 
 $now = new \DateTime("now", new DateTimeZone("UTC"));
 $then = clone $now;
-$then->modify("+3 days");
+$then->modify("+{$daysout} days");
+$item_count = 0;
+$items = [];
 foreach($programs as $program){
 		if($program->endTime <= $now || $program->startTime > $then){
 			continue;
 		}
-
+		
+		
 		$pinLayout = new PinLayout(
 			PinLayoutType::GENERIC_PIN, $program->title, "GHTV", ucfirst($program->category), getBody($program), PinIcon::TIMELINE_SPORTS
 		);
@@ -62,17 +85,30 @@ foreach($programs as $program){
 		$reminder_time->modify("-30 minutes");
 		$reminder = new PinReminder($reminderlayout, $reminder_time); //send the reminder right away
 
-
+		
 
 		$pin = new Pin(getPinId($program), $program->startTime, $pinLayout, $program->duration , null);
 		$pin->addReminder($reminder);
+		
+		
+		if($command == PUSH){
+			Timeline::pushSharedPin($key, [$program->category], $pin);
+		} else {
+			$items[] = $pin->getData();
+		}
 
-		Timeline::pushSharedPin($key, [$program->category], $pin);
-
-
-
+		$item_count++;
+		if($item_count >= $numitems){
+			break;
+		}
 }
 
+if($command === DISPLAY){
+	if(count($items) == 1){
+		$items = $items[0];
+	}
+	echo json_encode($items,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES);
+}
 
 function sortPrograms($a,$b)
 {
@@ -100,7 +136,7 @@ function getCategory($title){
 
 
 function getPinId($program){
-	return sprintf("ghtv-%s-%d",strtolower(preg_replace('/\s+/','',$program->channel)),$program->startTime->format("YmdHis"));
+	return sprintf("ghtv-%s-%s",strtolower(preg_replace('/\s+/','',$program->channel)),$program->startTime->format("YmdHi"));
 }
 
 function getBody($program){
