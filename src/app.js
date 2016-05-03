@@ -3,38 +3,70 @@ var SubscriptionManager = require("node_modules/pebble-subscription-manager/subs
 var Timeline = require('timeline');
 var UI = require('ui');
 var Wakeup = require('wakeup');
-var LAUNCH_CODE_REMINDER = 1;
+var ajax = require('ajax');
+
 var minutes = 5;
 Timeline.launch(function(e){
   if(e.action){
-    console.log(JSON.stringify(e));
-    if(e.launchCode == LAUNCH_CODE_REMINDER){
-      var card = new UI.Card({
+    var channel = parseInt(e.launchCode.toString().substr(0,1),10);
+    var start = parseInt(e.launchCode.toString().substr(1)+"0000",10);
+    var title = "";
+    var channelTitle = "";
+    var card = new UI.Card({
+      title: " ",
+      subtitle:"GHTV Programs",
+      icon: "images/gh-live-logo.png",
+      body: getReminderBody(minutes)
+    });
+    card.on('click','up',function(){
+      if(minutes > 0){
+        minutes--;
+        if(minutes < 0){
+          minutes = 0;
+        }
+        card.body(getReminderBody(minutes));
+      }
+    });
+    card.on('click','down',function(){
+      if(minutes < 30){
+        minutes++;
+        if(minutes > 30){
+          minutes = 30;
+        }
+        card.body(getReminderBody(minutes));
+      }
+    });
+    card.on('click','select',function(){
+      var confirmCard = new UI.Card({
         title: " ",
         subtitle:"GHTV Programs",
         icon: "images/gh-live-logo.png",
-        body: getReminderBody(minutes)
+        body: getReminderConfirmBody(title,channelTitle,start,minutes)
       });
-      card.on('click','up',function(){
-        if(minutes > 0){
-          minutes--;
-          if(minutes < 0){
-            minutes = 0;
-          }
-          card.body(getReminderBody(minutes));
-        }
-      });
-      card.on('click','down',function(){
-        if(minutes < 30){
-          minutes++;
-          if(minutes > 30){
-            minutes = 30;
-          }
-          card.body(getReminderBody(minutes));
-        }
-      });
-      card.show();
+      confirmCard.show();
+    });
+  ajax(
+  {
+    url: 'https://www.guitarhero.com/api/papi-client/ghl/v1/channelSchedules/en/all/',
+    type: 'json'
+  },
+  function(data, status, request) {
+    channelTitle = data.data[channel].title;
+    var programs = data.data[channel].programmes;
+    for(var i = 0; i< programs.length;i++){
+      if(programs[i].startTime == start) {
+        title = programs[i].title;
+        break;
+      }
     }
+    card.show();
+  },
+  function(error, status, request) {
+    console.log('The ajax request failed: ' + error);
+  }
+  );
+    
+    
   } else {
     var sm = new SubscriptionManager({title: "  ",subtitle:"GHTV Programs", "icon":"images/gh-live-logo.png"});
 
@@ -67,4 +99,11 @@ Timeline.launch(function(e){
 
 function getReminderBody(i){
   return "Press 'Select' to set a reminder for "+i+" minute"+(i==1?"":"s")+" before start.";
+}
+
+
+function getReminderConfirmBody(title,channelTitle,start, minutes){
+  var reminder = start-(minutes*60000);
+  var d = new Date(reminder);
+  return "A reminder has been set for "+title+" on "+channelTitle+" at "+d.getHours()+":"+d.getMinutes();
 }
