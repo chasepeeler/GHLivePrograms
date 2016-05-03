@@ -9,6 +9,8 @@ use TimelineAPI\PinLayoutType;
 use TimelineAPI\PinIcon;
 use TimelineAPI\PinReminder;
 use TimelineAPI\Timeline;
+use TimelineAPI\PinAction;
+use TimelineAPI\PinActionType;
 use Garden\Cli\Cli;
 
 define('PUSH','push');
@@ -71,10 +73,14 @@ foreach($programs as $program){
 		if($program->endTime <= $now || $program->startTime > $then){
 			continue;
 		}
-		
+		$ghtv = "GHTV";
+		if($key == TEST_KEY){
+			$program->title .= "_TEST";
+			$ghtv .= "-TEST";
+		}
 		
 		$pinLayout = new PinLayout(
-			PinLayoutType::GENERIC_PIN, $program->title, "GHTV", ucfirst($program->category), getBody($program), PinIcon::TIMELINE_SPORTS
+			PinLayoutType::GENERIC_PIN, $program->title, $ghtv, ucfirst($program->category), getBody($program), PinIcon::TIMELINE_SPORTS
 		);
 
 		$reminderlayout = new PinLayout(
@@ -90,6 +96,8 @@ foreach($programs as $program){
 		$pin = new Pin(getPinId($program), $program->startTime, $pinLayout, $program->duration , null);
 		$pin->addReminder($reminder);
 		
+		$action = new PinAction('Reminder',1,PinActionType::OPEN_WATCH_APP);
+		$pin->addAction($action);		
 		
 		if($command == PUSH){
 			Timeline::pushSharedPin($key, [$program->category], $pin);
@@ -136,7 +144,13 @@ function getCategory($title){
 
 
 function getPinId($program){
-	return sprintf("ghtv-%s-%s",strtolower(preg_replace('/\s+/','',$program->channel)),$program->startTime->format("YmdHi"));
+	global $key;
+	
+	$id = sprintf("ghtv-%s-%s",strtolower(preg_replace('/\s+/','',$program->channel)),$program->startTime->format("YmdHi"));
+	if($key == TEST_KEY){
+		$id .= "-test";
+	}
+	return $id;
 }
 
 function getBody($program){
