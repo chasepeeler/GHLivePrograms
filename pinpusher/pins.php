@@ -105,14 +105,18 @@ foreach($programs as $program){
 		}
 		$id = getPinId($program);
 		if($command == DELETE){
-			Timeline::deleteSharedPin($key,$id);
+			$r = Timeline::deleteSharedPin($key,$id);
 			if($verbose){
 				echo "Deleted Pin: {$id}. Category: {$program->category}, Title: {$program->title}, Start: ".$program->startTime->format("m/d/Y H:i").PHP_EOL;
+				echo "Result: ".$r['status']['message'].' ('.$r['status']['code'].')'.PHP_EOL;
+				if(!empty($r['result'])){
+					echo json_encode($r['result'],JSON_PRETTY_PRINT).PHP_EOL;
+				}
 			}
 		} else {
 		
 			$pinLayout = new PinLayout(
-				PinLayoutType::GENERIC_PIN, $program->title, $program->title, $program->channel, getBody($program), PinIcon::MUSIC_EVENT, PinIcon::MUSIC_EVENT, PinIcon::MUSIC_EVENT, PebbleColour::WHITE, PebbleColour::CHROME_YELLOW
+				PinLayoutType::CALENDAR_PIN, $program->title, $program->title, $program->channel, getBody($program), PinIcon::MUSIC_EVENT, PinIcon::MUSIC_EVENT, PinIcon::MUSIC_EVENT, PebbleColour::WHITE, PebbleColour::CHROME_YELLOW, null, null, null, ["locationName"=>$program->channel]
 			);
 
 			$reminderlayout = new PinLayout(
@@ -130,9 +134,13 @@ foreach($programs as $program){
 			$pin->addAction($action);		
 			
 			if($command == PUSH){
-				Timeline::pushSharedPin($key, [$program->category], $pin);
+				$r = Timeline::pushSharedPin($key, [$program->category], $pin);
 				if($verbose){
 					echo "Pushed Pin: {$id}. Category: {$program->category}, Title: {$program->title}, Start: ".$program->startTime->format("m/d/Y H:i").PHP_EOL;
+					echo "Result: ".$r['status']['message'].' ('.$r['status']['code'].')'.PHP_EOL;
+					if(!empty($r['result'])){
+						echo json_encode($r['result'],JSON_PRETTY_PRINT).PHP_EOL;
+					}
 				}
 			} else {
 				$items[] = $pin->getData();

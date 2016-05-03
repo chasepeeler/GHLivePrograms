@@ -4,10 +4,10 @@
 			"type":"package",
 			"package": {
 				"name": "fletchto99/phppebbletimeline",
-				"version": "1.0",
+				"version": "1.1",
 				"source": {
 					"type": "git",
-					"url": "https://github.com/fletchto99/PHPebbleTimeline.git",
+					"url": "https://github.com/chasepeeler/PHPebbleTimeline.git",
 					"reference": "master"
 					
 				},
@@ -19,7 +19,7 @@
 		}
 	],
 	"require": {
-		"fletchto99/phppebbletimeline": "1.0",
+		"fletchto99/phppebbletimeline": "1.1",
 		"vanilla/garden-cli": "~1.0"
 	}
 		
