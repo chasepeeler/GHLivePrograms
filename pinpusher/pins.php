@@ -127,7 +127,7 @@ foreach($programs as $program){
 			$reminder_time->modify("-30 minutes");
 			$reminder = new PinReminder($reminderlayout, $reminder_time); //send the reminder right away
 			
-			$action = new PinAction('Reminder',$program->channel_number.$program->startTime->getTimestamp(),PinActionType::OPEN_WATCH_APP);
+			$action = new PinAction('Reminder',$program->channel_number.($program->startTime->getTimestamp()/100),PinActionType::OPEN_WATCH_APP);
 			
 			$pin = new Pin($id, $program->startTime, $pinLayout, $program->duration , null);
 			$pin->addReminder($reminder);
